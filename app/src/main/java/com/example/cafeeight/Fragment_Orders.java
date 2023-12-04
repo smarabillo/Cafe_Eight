@@ -54,7 +54,16 @@ public class Fragment_Orders extends Fragment {
     }
 
     private void openCartFragment() {
+        // Create a new instance of the ShoppingCartFragment (replace this with your actual fragment class)
+        Fragment Fragment_Cart = new Fragment_Cart();
+
+        // Replace the current fragment with the shoppingCartFragment
+        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, Fragment_Cart);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
+
 
     //    Navigate Through Nester Fragments
     private void setClickListener(View view, final Fragment fragment) {

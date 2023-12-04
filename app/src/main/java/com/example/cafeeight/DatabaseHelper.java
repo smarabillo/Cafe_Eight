@@ -42,6 +42,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_NAME_ORDERS + " TEXT, " +
                 COLUMN_QUANTITY + " INTEGER, " +
                 COLUMN_PRICE + " REAL)";
+
         db.execSQL(createOrdersTableQuery);
 
         // Create Users table

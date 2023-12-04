@@ -8,7 +8,7 @@
     android:background="@drawable/borders">
 
     <ImageView
-        android:id="@+id/itemImage"
+        android:id="@+id/itemViewImage"
         android:layout_width="86dp"
         android:layout_height="86dp"
         android:layout_marginRight="8dp" />

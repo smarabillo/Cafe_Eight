@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class Fragment_Cart extends Fragment {
+public class  Fragment_Cart extends Fragment {
 
     private RecyclerView recyclerView;
     private CartAdapter cartAdapter;
