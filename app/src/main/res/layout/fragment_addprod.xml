@@ -1,0 +1,23 @@
+<!-- res/layout/add_product_dialog.xml -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/etProductName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:hint="Product Name"/>
+
+    <!-- Increase touchable area by adding padding -->
+    <EditText
+        android:id="@+id/etProductStocks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Product Stocks"
+        android:textSize="20sp"
+        android:paddingTop="12dp"/>
+</LinearLayout>

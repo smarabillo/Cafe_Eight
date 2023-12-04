@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Cafe Eight</string>
+    <string name="title_home">Dashboard</string>
+    <string name="title_order">Orders</string>
+    <string name="title_menu">Menu</string>
+    <string name="title_activity_bottom_nav">Activity_BottomNav</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+</resources>
