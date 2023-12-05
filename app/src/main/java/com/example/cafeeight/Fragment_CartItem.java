@@ -1,19 +1,22 @@
 package com.example.cafeeight;
 
+import android.widget.ImageView;
+
 import java.util.Objects;
 
 class Fragment_CartItem {
+
     private String itemName;
     private int quantity;
     private double price;
-    private int image;
     private double totalPrice;
+    private double originalPrice;
 
-    public Fragment_CartItem(String itemName, int quantity, double price) {
+    public Fragment_CartItem(String itemName, int quantity, int price) {
         this.itemName = itemName;
         this.quantity = quantity;
         this.price = price;
-        this.image = image;
+        this.originalPrice = originalPrice;
     }
 
     @Override
@@ -29,13 +32,8 @@ class Fragment_CartItem {
         return Objects.hash(itemName);
     }
 
-    public int getItemImage() {
-        return image;
-    }
-
     public double getTotalPrice() {
-        // Calculate the total price based on quantity and unit price
-        return quantity * price;
+        return quantity + price - quantity;
     }
 
     public String getItemName() {
@@ -50,12 +48,14 @@ class Fragment_CartItem {
         this.quantity = quantity;
     }
 
-
     public double getPrice() {
         return price;
     }
 
-    // You can remove this method if you don't use it elsewhere in your code
+    public void setPrice(double price){
+        this.price = price;
+    }
+
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
     }

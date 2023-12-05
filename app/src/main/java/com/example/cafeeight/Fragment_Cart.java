@@ -159,12 +159,10 @@ public class Fragment_Cart extends Fragment {
     }
 
     public class CartViewHolder extends RecyclerView.ViewHolder {
-        private ImageView itemViewImage;
         private TextView itemNameTxt, quantityTxt, priceTxt;
 
         public CartViewHolder(@NonNull View itemView) {
             super(itemView);
-            itemViewImage = itemView.findViewById(R.id.itemViewImage);
             itemNameTxt = itemView.findViewById(R.id.itemNameTxt);
             quantityTxt = itemView.findViewById(R.id.quantityTxt);
             priceTxt = itemView.findViewById(R.id.priceTxt);
@@ -175,8 +173,6 @@ public class Fragment_Cart extends Fragment {
             quantityTxt.setText("Quantity: " + fragmentCartItem.getQuantity());
             priceTxt.setText("Price: " + fragmentCartItem.getTotalPrice());
 
-            int itemImageResourceId = fragmentCartItem.getItemImage();
-            itemViewImage.setImageResource(itemImageResourceId);
         }
     }
 }

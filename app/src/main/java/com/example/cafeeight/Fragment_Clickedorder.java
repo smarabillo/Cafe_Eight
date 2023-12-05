@@ -91,21 +91,12 @@ public class Fragment_Clickedorder extends AppCompatActivity {
     private void addToCart() {
         String selectedName = textView.getText().toString();
         int quantity = numberOrder;
-        int imageViewResourceID = getDrawableResourceID(imageView);
-        double totalPrice = Double.parseDouble(priceTxt.getText().toString());
+        int totalPrice = (int) Double.parseDouble(priceTxt.getText().toString());
 
         Fragment_CartItem fragmentCartItem = new Fragment_CartItem(selectedName, quantity, totalPrice);
         CartManager.getInstance().addToCart(fragmentCartItem);
 
         showToast("Item added to cart");
-    }
-
-    // Helper method to get the image resource ID from the ImageView
-    private int getDrawableResourceID(ImageView imageView) {
-        if (imageView.getTag() != null && imageView.getTag() instanceof Integer) {
-            return (int) imageView.getTag();
-        }
-        return 0;  // Return a default value or handle it according to your needs
     }
 
 
@@ -141,14 +132,13 @@ public class Fragment_Clickedorder extends AppCompatActivity {
             int index = findItemIndex(fragmentCartItem);
 
             if (index != -1) {
-                // Item already exists in the cart, update quantity and total price
+                // Item already exists in the cart, update quantity
                 Fragment_CartItem existingItem = fragmentCartItems.get(index);
                 existingItem.setQuantity(existingItem.getQuantity() + fragmentCartItem.getQuantity());
-
-                // Adjust the total price calculation based on your requirements
-                existingItem.setTotalPrice(existingItem.getTotalPrice() + fragmentCartItem.getTotalPrice());
+                existingItem.setPrice(existingItem.getPrice() + fragmentCartItem.getPrice());
             } else {
-                // Item doesn't exist in the cart, add it
+                // Item doesn't exist in the cart, add it and set the original price
+                fragmentCartItem.setTotalPrice(fragmentCartItem.getPrice()); // Assuming you have a getPrice() method
                 fragmentCartItems.add(fragmentCartItem);
             }
         }
@@ -164,6 +154,8 @@ public class Fragment_Clickedorder extends AppCompatActivity {
             }
             return -1; // Item not found
         }
+
+
 
         public List<Fragment_CartItem> getCartItems() {
             return fragmentCartItems;
