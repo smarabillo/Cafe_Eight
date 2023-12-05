@@ -18,6 +18,7 @@ public class Fragment_Noncoffee extends Fragment {
 
     private GridView gridNonCoffee;
     private String[] nonCoffeeNames = {"House Blend Iced Tea", "Matcha Latte", "Cucumber Lemonade", "Strawberry Soda"};
+    private int[] nonCoffeePrices  = {55, 105, 85, 70};
     private int[] nonCoffeeImages = {R.drawable.product_houseblendicedtea, R.drawable.product_matchalatte, R.drawable.product_cucumberemonade, R.drawable.product_strawberrysoda};
 
     @Nullable
@@ -26,14 +27,16 @@ public class Fragment_Noncoffee extends Fragment {
         View view = inflater.inflate(R.layout.fragment_noncoffee, container, false);
 
         gridNonCoffee = view.findViewById(R.id.OrderGrid);
-        CustomAdapter customAdapter = new CustomAdapter(nonCoffeeNames, nonCoffeeImages);
+        CustomAdapter customAdapter = new CustomAdapter(nonCoffeeNames, nonCoffeePrices, nonCoffeeImages);
         gridNonCoffee.setAdapter(customAdapter);
 
         gridNonCoffee.setOnItemClickListener((adapterView, item, position, id) -> {
             String selectedName = nonCoffeeNames[position];
+            int selectedPrice = nonCoffeePrices[position];
             int selectedImage = nonCoffeeImages[position];
             startActivity(new Intent(requireActivity(), Fragment_Clickedorder.class)
                     .putExtra("name", selectedName)
+                    .putExtra("price", selectedPrice)
                     .putExtra("image", selectedImage));
         });
 
@@ -72,12 +75,14 @@ public class Fragment_Noncoffee extends Fragment {
     public class CustomAdapter extends BaseAdapter {
         private String[] imageNames;
         private int[] imagesPhoto;
+        private int[] imagePrice;
         private LayoutInflater layoutInflater;
 
-        public CustomAdapter(String[] imageNames, int[] imagesPhoto) {
+        public CustomAdapter(String[] imageNames, int[] imagePrice, int[] imagesPhoto) {
             this.imageNames = imageNames;
+            this.imagePrice = imagePrice;
             this.imagesPhoto = imagesPhoto;
-            this.layoutInflater = LayoutInflater.from(requireContext());
+            this.layoutInflater = LayoutInflater.from(requireActivity());
         }
 
         @Override
@@ -101,9 +106,11 @@ public class Fragment_Noncoffee extends Fragment {
                 convertView = layoutInflater.inflate(R.layout.row_noncoffee, parent, false);
             }
             TextView tvName = convertView.findViewById(R.id.nameNonCoffee);
+            TextView tvPrice = convertView.findViewById(R.id.priceNonCoffee);
             ImageView imageView = convertView.findViewById(R.id.imgNonCoffee);
 
             tvName.setText(imageNames[position]);
+            tvPrice.setText(String.valueOf(imagePrice[position]));
             imageView.setImageResource(imagesPhoto[position]);
             return convertView;
         }

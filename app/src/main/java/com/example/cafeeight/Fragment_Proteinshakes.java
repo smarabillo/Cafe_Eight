@@ -13,12 +13,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 public class Fragment_Proteinshakes extends Fragment {
 
     private GridView gridProteinShake;
     private String[] proteinShakeNames = {"Vanilla Protein Shake", "Strawberry Protein Shake", "Protein Fusion Fuel"};
+    private int[] proteinShakePrices = {115, 125, 145};
     private int[] proteinShakeImages = {R.drawable.product_vanillaproteinshake, R.drawable.product_strawberryproteinshake, R.drawable.product_proteinfusionfuel};
 
     @Nullable
@@ -27,14 +29,16 @@ public class Fragment_Proteinshakes extends Fragment {
         View view = inflater.inflate(R.layout.fragment_proteinshake, container, false);
 
         gridProteinShake = view.findViewById(R.id.OrderGrid);
-        CustomAdapter customAdapter = new CustomAdapter(proteinShakeNames, proteinShakeImages);
+        CustomAdapter customAdapter = new CustomAdapter(proteinShakeNames, proteinShakePrices, proteinShakeImages);
         gridProteinShake.setAdapter(customAdapter);
 
         gridProteinShake.setOnItemClickListener((adapterView, item, position, id) -> {
             String selectedName = proteinShakeNames[position];
+            int selectedPrice = proteinShakePrices[position];
             int selectedImage = proteinShakeImages[position];
             startActivity(new Intent(requireActivity(), Fragment_Clickedorder.class)
                     .putExtra("name", selectedName)
+                    .putExtra("price", selectedPrice)
                     .putExtra("image", selectedImage));
         });
 
@@ -50,15 +54,6 @@ public class Fragment_Proteinshakes extends Fragment {
         return view;
     }
 
-    private void openCartFragment() {
-        Fragment_Cart cartFragment = new Fragment_Cart();
-        getParentFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, cartFragment)
-                .addToBackStack(null)
-                .commit();
-    }
-
-    //    Navigate Through Nested Fragments
     private void setClickListener(View view, final Fragment fragment) {
         view.setOnClickListener(v -> replaceFragment(fragment));
     }
@@ -70,13 +65,26 @@ public class Fragment_Proteinshakes extends Fragment {
                 .commit();
     }
 
+    private void openCartFragment() {
+        Fragment_Cart cartFragment = new Fragment_Cart();
+        FragmentManager fragmentManager = getFragmentManager();
+        if (fragmentManager != null) {
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, cartFragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
+    }
+
     public class CustomAdapter extends BaseAdapter {
         private String[] imageNames;
+        private int[] imagePrice;
         private int[] imagesPhoto;
         private LayoutInflater layoutInflater;
 
-        public CustomAdapter(String[] imageNames, int[] imagesPhoto) {
+        public CustomAdapter(String[] imageNames, int[] imagePrice, int[] imagesPhoto) {
             this.imageNames = imageNames;
+            this.imagePrice = imagePrice;
             this.imagesPhoto = imagesPhoto;
             this.layoutInflater = LayoutInflater.from(requireActivity());
         }
@@ -102,9 +110,11 @@ public class Fragment_Proteinshakes extends Fragment {
                 convertView = layoutInflater.inflate(R.layout.row_proteinshake, parent, false);
             }
             TextView tvName = convertView.findViewById(R.id.nameProteinShake);
+            TextView tvPrice = convertView.findViewById(R.id.priceProteinShake);
             ImageView imageView = convertView.findViewById(R.id.imgProteinShake);
 
             tvName.setText(imageNames[position]);
+            tvPrice.setText(String.valueOf(imagePrice[position]));
             imageView.setImageResource(imagesPhoto[position]);
             return convertView;
         }

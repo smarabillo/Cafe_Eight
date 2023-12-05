@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.annotation.NonNull;
@@ -17,8 +18,9 @@ import java.util.List;
 public class  Fragment_Cart extends Fragment {
 
     private RecyclerView recyclerView;
+    private ScrollView scrollView;
     private CartAdapter cartAdapter;
-    private TextView itemsTotalTxt, taxTxt, totalPriceTxt, checkoutBtn;
+    private TextView itemsTotalTxt, totalPriceTxt, checkoutBtn;
 
     private static DatabaseHelper databaseHelper;
 
@@ -34,7 +36,6 @@ public class  Fragment_Cart extends Fragment {
 
         recyclerView = view.findViewById(R.id.recyclerView);
         itemsTotalTxt = view.findViewById(R.id.ItemTotal);
-        taxTxt = view.findViewById(R.id.TaxTxt);
         totalPriceTxt = view.findViewById(R.id.totalPrice);
         checkoutBtn = view.findViewById(R.id.CheckOutBtn);
 
@@ -49,6 +50,7 @@ public class  Fragment_Cart extends Fragment {
         return view;
     }
 
+
     private List<CartItem> getCartItems() {
         return databaseHelper.getCartItems();
     }
@@ -56,38 +58,43 @@ public class  Fragment_Cart extends Fragment {
     private void updateTotalAmount() {
         // Calculate total amount
         double totalAmount = calculateTotalAmount();
+        int totalItems = calculateTotalQuantity();
 
         // Update items total text
-        itemsTotalTxt.setText("Items Total: ₱" + totalAmount);
-
-        // Calculate tax (12% VAT)
-        double taxAmount = 0.12 * totalAmount;
-        taxTxt.setText("12% VAT: ₱" + String.format("%.2f", taxAmount));
+        itemsTotalTxt.setText("Total Items: " + totalItems);
 
         // Calculate total price including tax
-        double totalPrice = totalAmount + taxAmount;
-        totalPriceTxt.setText("Total: ₱" + String.format("%.2f", totalPrice));
+        double totalPrice = totalAmount;
+        totalPriceTxt.setText("Total Amount: ₱" + String.format("%.0f", totalPrice));
 
         // Set up checkout button click listener
-        checkoutBtn.setOnClickListener(v -> performCheckout(totalAmount, taxAmount, totalPrice));
-    };
+        checkoutBtn.setOnClickListener(v -> performCheckout(totalPrice, totalItems));
+    }
 
-    private void performCheckout(double totalAmount, double taxAmount, double totalPrice) {
-        String orderDetails = "Items Total: ₱" + totalAmount + "\n"
-                + "Tax: ₱" + taxAmount + "\n"
-                + "Total: ₱" + totalPrice;
+    private void performCheckout(double totalAmount, int totalItems) {
+        // Custom layout for order summary
+        View view = LayoutInflater.from(requireContext()).inflate(R.layout.fragment_transactions, null);
+        TextView textViewTotalAmount = view.findViewById(R.id.textViewTotalAmount);
 
+        // Set order details in the custom layout
+        String orderDetails = "Total Items " + "\t" + totalItems + "\n" + "Total Amount: ₱ " + totalAmount;
+        textViewTotalAmount.setText(orderDetails);
 
+        // Create AlertDialog with the custom layout
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Order Summary")
-                .setMessage(orderDetails)
+                .setView(view)
                 .setPositiveButton("Confirm", (dialog, which) -> {
-
+                    // Handle Confirm button click
                     dialog.dismiss();
                 })
-                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .setNegativeButton("Cancel", (dialog, which) -> {
+                    // Handle Cancel button click
+                    dialog.dismiss();
+                })
                 .show();
     }
+
 
 
     private double calculateTotalAmount() {
@@ -103,6 +110,20 @@ public class  Fragment_Cart extends Fragment {
         return totalAmount;
     }
 
+    private int calculateTotalQuantity() {
+        List<CartItem> cartItems = getCartItems();
+        int totalQuantity = 0;
+
+        if (cartItems != null) {
+            for (CartItem cartItem : cartItems) {
+                totalQuantity += cartItem.getQuantity();
+            }
+        }
+
+        return totalQuantity;
+    }
+
+
     // CartItem class
     static class CartItem {
         private String itemName;
@@ -116,7 +137,7 @@ public class  Fragment_Cart extends Fragment {
         }
 
         public double getTotalPrice() {
-            return quantity * price;
+            return quantity + price - quantity;
         }
 
         public String getItemName() {
@@ -175,7 +196,7 @@ public class  Fragment_Cart extends Fragment {
         public void bind(CartItem cartItem) {
             itemNameTxt.setText(cartItem.getItemName());
             quantityTxt.setText("Quantity: " + cartItem.getQuantity());
-            priceTxt.setText("Price: $" + cartItem.getPrice());
+            priceTxt.setText("Price: " + cartItem.getTotalPrice());
         }
     }
 }

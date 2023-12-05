@@ -11,10 +11,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class Fragment_Clickedorder extends AppCompatActivity {
     private ImageView imageView, plusBtn, minusBtn;
-    private TextView textView, feeTxt, descriptionTxt, numberOrderTxt, priceTxt, addToCartBtn;
+    private TextView textView;
+    private TextView numberOrderTxt;
+    private TextView priceTxt;
+    private TextView addToCartBtn;
+    private double originalPrice;
 
     private int numberOrder = 1;
-    private double price = 100;
 
     private DatabaseHelper databaseHelper;
 
@@ -31,7 +34,9 @@ public class Fragment_Clickedorder extends AppCompatActivity {
         if (intent != null && intent.getExtras() != null) {
             String selectedName = intent.getStringExtra("name");
             int selectedImage = intent.getIntExtra("image", 0);
-            double selectedPrice = intent.getDoubleExtra("price", 100);
+            int selectedPrice = intent.getIntExtra("price", 0);
+
+            originalPrice = selectedPrice;
 
             Log.d("Clicked Order", "Selected Name: " + selectedName);
             Log.d("Clicked Order", "Selected Image: " + selectedImage);
@@ -39,7 +44,7 @@ public class Fragment_Clickedorder extends AppCompatActivity {
             if (selectedName != null && selectedImage != 0) {
                 textView.setText(selectedName);
                 imageView.setImageResource(selectedImage);
-                price = selectedPrice;
+                priceTxt.setText(String.valueOf(selectedPrice));
                 updatePrice();
             }
         }
@@ -64,24 +69,29 @@ public class Fragment_Clickedorder extends AppCompatActivity {
     private void initializeViews() {
         imageView = findViewById(R.id.imageView);
         textView = findViewById(R.id.tvname);
-        feeTxt = findViewById(R.id.feeTxt);
-        descriptionTxt = findViewById(R.id.descriptionTxt);
+        priceTxt = findViewById(R.id.itemPrice);
         numberOrderTxt = findViewById(R.id.numberOrderTxt);
-        priceTxt = findViewById(R.id.feeTxt);
         plusBtn = findViewById(R.id.plusBtn);
         minusBtn = findViewById(R.id.minusBtn);
         addToCartBtn = findViewById(R.id.addToCartBtn);
     }
 
     private void updatePrice() {
-        double totalPrice = numberOrder * price;
-        priceTxt.setText(String.valueOf(totalPrice));
+        if (numberOrder >= 0) {
+            double totalPrice = numberOrder * originalPrice;
+            priceTxt.setText(String.valueOf(totalPrice));
+        } else {
+            showToast("Quantity must be greater than or equal to 0");
+        }
     }
+
 
     private void addToCart() {
         String selectedName = textView.getText().toString();
         int quantity = numberOrder;
-        double totalPrice = quantity * price;
+
+        // Use double for totalPrice since it's a calculated value
+        double totalPrice = Double.parseDouble(priceTxt.getText().toString());
 
         long id = databaseHelper.insertOrder(selectedName, quantity, totalPrice);
 
@@ -92,8 +102,8 @@ public class Fragment_Clickedorder extends AppCompatActivity {
         }
     }
 
+
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }
-

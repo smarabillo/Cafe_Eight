@@ -10,34 +10,35 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 public class Fragment_Orders extends Fragment {
 
-    private GridView Grid_HotCoffee;
-    private String[] HotCoffee = {"Brewed", "Latte", "Cappuccino"};
-    private int[] imgHotCoffee = {R.drawable.prodcut_brewed, R.drawable.product_latte, R.drawable.product_cappuccino};
+    private GridView gridHotCoffee;
+    private String[] hotCoffeeNames = {"Brewed", "Latte", "Cappuccino"};
+    private int[] hotCoffeePrices = {55, 90, 90};
+    private int[] hotCoffeeImages = {R.drawable.prodcut_brewed, R.drawable.product_latte, R.drawable.product_cappuccino};
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_orders, container, false);
 
-        // Grid View for Hot Coffee
+        gridHotCoffee = view.findViewById(R.id.OrderGrid);
+        Fragment_Orders.CustomAdapter customAdapter = new Fragment_Orders.CustomAdapter(hotCoffeeNames, hotCoffeePrices, hotCoffeeImages);
+        gridHotCoffee.setAdapter(customAdapter);
 
-        Grid_HotCoffee = view.findViewById(R.id.OrderGrid);
-        CustomAdapter customAdapter = new CustomAdapter(HotCoffee, imgHotCoffee);
-        Grid_HotCoffee.setAdapter(customAdapter);
-
-        Grid_HotCoffee.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String selectedName = HotCoffee[i];
-                int selectedImage = imgHotCoffee[i];
-                startActivity(new Intent(getActivity(), Fragment_Clickedorder.class)
-                        .putExtra("name", selectedName)
-                        .putExtra("image", selectedImage));
-            }
+        gridHotCoffee.setOnItemClickListener((adapterView, item, position, id) -> {
+            String selectedName = hotCoffeeNames [position];
+            int selectedPrice = hotCoffeePrices[position];
+            int selectedImage = hotCoffeeImages[position];
+            startActivity(new Intent(requireActivity(), Fragment_Clickedorder.class)
+                    .putExtra("name", selectedName)
+                    .putExtra("price", selectedPrice)
+                    .putExtra("image", selectedImage));
         });
 
         setClickListener(view.findViewById(R.id.hotcoffee), new Fragment_Orders());
@@ -46,52 +47,45 @@ public class Fragment_Orders extends Fragment {
         setClickListener(view.findViewById(R.id.noncoffee), new Fragment_Noncoffee());
         setClickListener(view.findViewById(R.id.proteinshakes), new Fragment_Proteinshakes());
 
-        // Set up the cart ImageView click listener
         ImageView cartImageView = view.findViewById(R.id.cart);
         cartImageView.setOnClickListener(v -> openCartFragment());
 
         return view;
     }
 
-    private void openCartFragment() {
-        // Create a new instance of the ShoppingCartFragment (replace this with your actual fragment class)
-        Fragment Fragment_Cart = new Fragment_Cart();
-
-        // Replace the current fragment with the shoppingCartFragment
-        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, Fragment_Cart);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
-
-
-    //    Navigate Through Nester Fragments
     private void setClickListener(View view, final Fragment fragment) {
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                replaceFragment(fragment);
-            }
-        });
-    }
-    private void replaceFragment(Fragment fragment) {
-        // Replace the current fragment with the new nested fragment
-        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, fragment); // Use your container view's ID
-        transaction.addToBackStack(null); // Optional: Add to back stack
-        transaction.commit();
+        view.setOnClickListener(v -> replaceFragment(fragment));
     }
 
-    //    On Click Products
+    private void replaceFragment(Fragment fragment) {
+        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void openCartFragment() {
+        Fragment_Cart cartFragment = new Fragment_Cart();
+        FragmentManager fragmentManager = getFragmentManager();
+        if (fragmentManager != null) {
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, cartFragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
+    }
+
     public class CustomAdapter extends BaseAdapter {
         private String[] imageNames;
+        private int[] imagePrice;
         private int[] imagesPhoto;
         private LayoutInflater layoutInflater;
 
-        public CustomAdapter(String[] imageNames, int[] imagesPhoto) {
+        public CustomAdapter(String[] imageNames, int[]imagePrice, int[] imagesPhoto) {
             this.imageNames = imageNames;
+            this.imagePrice = imagePrice;
             this.imagesPhoto = imagesPhoto;
-            this.layoutInflater = LayoutInflater.from(getActivity());
+            this.layoutInflater = LayoutInflater.from(requireActivity());
         }
 
         @Override
@@ -100,26 +94,30 @@ public class Fragment_Orders extends Fragment {
         }
 
         @Override
-        public Object getItem(int i) {
+        public Object getItem(int position) {
             return null;
         }
 
         @Override
-        public long getItemId(int i) {
+        public long getItemId(int position) {
             return 0;
         }
 
         @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            if (view == null) {
-                view = layoutInflater.inflate(R.layout.row_hotcoffee, viewGroup, false);
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = layoutInflater.inflate(R.layout.row_hotcoffee, parent, false);
             }
-            TextView tvName = view.findViewById(R.id.nameHotCoffee);
-            ImageView imageView = view.findViewById(R.id.imgHotCoffee);
+            TextView tvName = convertView.findViewById(R.id.nameHotCoffee);
+            TextView tvPrice = convertView.findViewById(R.id.priceHotCoffee);
+            ImageView imageView = convertView.findViewById(R.id.imgHotCoffee);
 
-            tvName.setText(imageNames[i]);
-            imageView.setImageResource(imagesPhoto[i]);
-            return view;
+            tvName.setText(imageNames[position]);
+            tvPrice.setText(String.valueOf(imagePrice[position])); // Change this line
+            imageView.setImageResource(imagesPhoto[position]);
+            return convertView;
         }
+
     }
 }
+
