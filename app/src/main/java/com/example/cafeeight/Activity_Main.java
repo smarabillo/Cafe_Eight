@@ -15,13 +15,8 @@ public class Activity_Main extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     private final Fragment_Dashboard fragmentDashboard = new Fragment_Dashboard();
     private final Fragment_Orders fragmentOrders = new Fragment_Orders();
-    private final Fragment_Transactions fragmentMenu = new Fragment_Transactions();
+    private final Fragment_Transactions fragmentTransaction = new Fragment_Transactions();
     private final Fragment_Profile fragmentProfile = new Fragment_Profile();
-
-    //    Login
-    private EditText email, password, repassword;
-    private Button signup, signin;
-    private DatabaseHelper DB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +38,8 @@ public class Activity_Main extends AppCompatActivity {
                     loadFragment(fragmentDashboard);
                 } else if (itemId == R.id.order) {
                     loadFragment(fragmentOrders);
-                } else if (itemId == R.id.menu) {
-                    loadFragment(fragmentMenu);
+                } else if (itemId == R.id.transaction) {
+                    loadFragment(fragmentTransaction);
                 } else if (itemId == R.id.profile) {
                     loadFragment(fragmentProfile);
                 }

@@ -3,11 +3,13 @@ package com.example.cafeeight;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Fragment_Clickedorder extends AppCompatActivity {
     private ImageView imageView, plusBtn, minusBtn;
@@ -16,19 +18,20 @@ public class Fragment_Clickedorder extends AppCompatActivity {
     private TextView priceTxt;
     private TextView addToCartBtn;
     private double originalPrice;
-
     private int numberOrder = 1;
 
-    private DatabaseHelper databaseHelper;
+    private CartManager cartManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.clicked_order);
 
+        // Initialize CartManager
+        cartManager = new CartManager();
+
         initializeViews();
 
-        databaseHelper = new DatabaseHelper(this);
 
         Intent intent = getIntent();
         if (intent != null && intent.getExtras() != null) {
@@ -85,25 +88,86 @@ public class Fragment_Clickedorder extends AppCompatActivity {
         }
     }
 
-
     private void addToCart() {
         String selectedName = textView.getText().toString();
         int quantity = numberOrder;
-
-        // Use double for totalPrice since it's a calculated value
+        int imageViewResourceID = getDrawableResourceID(imageView);
         double totalPrice = Double.parseDouble(priceTxt.getText().toString());
 
-        long id = databaseHelper.insertOrder(selectedName, quantity, totalPrice);
+        Fragment_CartItem fragmentCartItem = new Fragment_CartItem(selectedName, quantity, totalPrice);
+        CartManager.getInstance().addToCart(fragmentCartItem);
 
-        if (id != -1) {
-            showToast("Item added to cart");
-        } else {
-            showToast("Failed to add item to cart");
+        showToast("Item added to cart");
+    }
+
+    // Helper method to get the image resource ID from the ImageView
+    private int getDrawableResourceID(ImageView imageView) {
+        if (imageView.getTag() != null && imageView.getTag() instanceof Integer) {
+            return (int) imageView.getTag();
         }
+        return 0;  // Return a default value or handle it according to your needs
     }
 
 
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    public static class CartManager {
+        private static CartManager instance;
+        private List<Fragment_CartItem> fragmentCartItems;
+
+        private CartManager() {
+            this.fragmentCartItems = new ArrayList<>();
+        }
+
+        public static CartManager getInstance() {
+            if (instance == null) {
+                instance = new CartManager();
+            }
+            return instance;
+        }
+
+        public void addToCart(Fragment_CartItem fragmentCartItem) {
+            if (fragmentCartItem == null) {
+                return; // Exit early if the item is null
+            }
+
+            if (fragmentCartItems == null) {
+                // Initialize the cartItems list if it's null
+                fragmentCartItems = new ArrayList<>();
+            }
+
+            int index = findItemIndex(fragmentCartItem);
+
+            if (index != -1) {
+                // Item already exists in the cart, update quantity and total price
+                Fragment_CartItem existingItem = fragmentCartItems.get(index);
+                existingItem.setQuantity(existingItem.getQuantity() + fragmentCartItem.getQuantity());
+
+                // Adjust the total price calculation based on your requirements
+                existingItem.setTotalPrice(existingItem.getTotalPrice() + fragmentCartItem.getTotalPrice());
+            } else {
+                // Item doesn't exist in the cart, add it
+                fragmentCartItems.add(fragmentCartItem);
+            }
+        }
+
+        private int findItemIndex(Fragment_CartItem newItem) {
+            if (fragmentCartItems != null && newItem != null) {
+                for (int i = 0; i < fragmentCartItems.size(); i++) {
+                    Fragment_CartItem existingItem = fragmentCartItems.get(i);
+                    if (existingItem.equals(newItem)) {
+                        return i; // Item found, return its index
+                    }
+                }
+            }
+            return -1; // Item not found
+        }
+
+        public List<Fragment_CartItem> getCartItems() {
+            return fragmentCartItems;
+        }
+
     }
 }

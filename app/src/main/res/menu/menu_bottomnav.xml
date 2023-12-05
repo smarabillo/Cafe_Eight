@@ -13,7 +13,7 @@
     <item
         android:title="Transactions"
         android:icon="@drawable/icon_history"
-        android:id="@+id/menu"
+        android:id="@+id/transaction"
         />
     <item
         android:title="Profile"

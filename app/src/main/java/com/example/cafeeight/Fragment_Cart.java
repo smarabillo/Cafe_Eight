@@ -1,10 +1,12 @@
 package com.example.cafeeight;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ScrollView;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.annotation.NonNull;
@@ -15,20 +17,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class  Fragment_Cart extends Fragment {
+public class Fragment_Cart extends Fragment {
 
     private RecyclerView recyclerView;
-    private ScrollView scrollView;
     private CartAdapter cartAdapter;
     private TextView itemsTotalTxt, totalPriceTxt, checkoutBtn;
 
     private static DatabaseHelper databaseHelper;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        databaseHelper = new DatabaseHelper(requireContext());
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -39,10 +35,12 @@ public class  Fragment_Cart extends Fragment {
         totalPriceTxt = view.findViewById(R.id.totalPrice);
         checkoutBtn = view.findViewById(R.id.CheckOutBtn);
 
-        // Set up RecyclerView
+        List<Fragment_CartItem> fragmentCartItems = Fragment_Clickedorder.CartManager.getInstance().getCartItems();
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
         recyclerView.setLayoutManager(layoutManager);
-        cartAdapter = new CartAdapter(getCartItems());
+
+        cartAdapter = new CartAdapter(fragmentCartItems);
         recyclerView.setAdapter(cartAdapter);
 
         updateTotalAmount();
@@ -50,26 +48,24 @@ public class  Fragment_Cart extends Fragment {
         return view;
     }
 
-
-    private List<CartItem> getCartItems() {
-        return databaseHelper.getCartItems();
-    }
-
     private void updateTotalAmount() {
-        // Calculate total amount
         double totalAmount = calculateTotalAmount();
         int totalItems = calculateTotalQuantity();
 
-        // Update items total text
         itemsTotalTxt.setText("Total Items: " + totalItems);
 
-        // Calculate total price including tax
         double totalPrice = totalAmount;
         totalPriceTxt.setText("Total Amount: ₱" + String.format("%.0f", totalPrice));
 
-        // Set up checkout button click listener
         checkoutBtn.setOnClickListener(v -> performCheckout(totalPrice, totalItems));
+
+        if (cartAdapter != null) {
+            List<Fragment_CartItem> updatedFragmentCartItems = Fragment_Clickedorder.CartManager.getInstance().getCartItems();
+            Log.d("Fragment_Cart", "Updated Cart Items: " + updatedFragmentCartItems.size());
+            cartAdapter.updateDataset(updatedFragmentCartItems);
+        }
     }
+
 
     private void performCheckout(double totalAmount, int totalItems) {
         // Custom layout for order summary
@@ -95,74 +91,49 @@ public class  Fragment_Cart extends Fragment {
                 .show();
     }
 
-
-
     private double calculateTotalAmount() {
-        List<CartItem> cartItems = getCartItems();
+        Fragment_Clickedorder.CartManager cartManager = Fragment_Clickedorder.CartManager.getInstance();
+
+        List<Fragment_CartItem> fragmentCartItems = cartManager.getCartItems();
+
         double totalAmount = 0;
 
-        if (cartItems != null) {
-            for (CartItem cartItem : cartItems) {
-                totalAmount += cartItem.getTotalPrice();
+        if (fragmentCartItems != null) {
+            for (Fragment_CartItem fragmentCartItem : fragmentCartItems) {
+                totalAmount += fragmentCartItem.getTotalPrice();
             }
         }
 
         return totalAmount;
     }
 
+
     private int calculateTotalQuantity() {
-        List<CartItem> cartItems = getCartItems();
+
+        Fragment_Clickedorder.CartManager cartManager = Fragment_Clickedorder.CartManager.getInstance();
+        List<Fragment_CartItem> fragmentCartItems = cartManager.getCartItems();
         int totalQuantity = 0;
 
-        if (cartItems != null) {
-            for (CartItem cartItem : cartItems) {
-                totalQuantity += cartItem.getQuantity();
+        if (fragmentCartItems != null) {
+            for (Fragment_CartItem fragmentCartItem : fragmentCartItems) {
+                totalQuantity += fragmentCartItem.getQuantity();
             }
         }
 
         return totalQuantity;
     }
 
-
-    // CartItem class
-    static class CartItem {
-        private String itemName;
-        private int quantity;
-        private double price;
-
-        public CartItem(String itemName, int quantity, double price) {
-            this.itemName = itemName;
-            this.quantity = quantity;
-            this.price = price;
-        }
-
-        public double getTotalPrice() {
-            return quantity + price - quantity;
-        }
-
-        public String getItemName() {
-            return itemName;
-        }
-
-        public int getQuantity() {
-            return quantity;
-        }
-
-        public double getPrice() {
-            return price;
-        }
-    }
-
     // CartAdapter class
-    private static class CartAdapter extends RecyclerView.Adapter<CartViewHolder> {
-        private final List<CartItem> cartItems;
+    public class CartAdapter extends RecyclerView.Adapter<CartViewHolder> {
+        private List<Fragment_CartItem> fragmentCartItems;
 
-        private List<CartItem> getCartItems() {
-            return databaseHelper.getCartItems();
+        public CartAdapter(List<Fragment_CartItem> fragmentCartItems) {
+            this.fragmentCartItems = fragmentCartItems;
         }
 
-        public CartAdapter(List<CartItem> cartItems) {
-            this.cartItems = cartItems;
+        public void updateDataset(List<Fragment_CartItem> newFragmentCartItems) {
+            this.fragmentCartItems = newFragmentCartItems;
+            notifyDataSetChanged();
         }
 
         @NonNull
@@ -172,31 +143,40 @@ public class  Fragment_Cart extends Fragment {
             return new CartViewHolder(view);
         }
 
+
         @Override
         public void onBindViewHolder(@NonNull CartViewHolder holder, int position) {
-            CartItem cartItem = cartItems.get(position);
-            holder.bind(cartItem);
+            Log.d("Fragment_Cart", "onBindViewHolder: position - " + position);
+
+            Fragment_CartItem fragmentCartItem = fragmentCartItems.get(position);
+            holder.bind(fragmentCartItem);
         }
 
         @Override
         public int getItemCount() {
-            return cartItems != null ? cartItems.size() : 0;
+            return fragmentCartItems != null ? fragmentCartItems.size() : 0;
         }
     }
-    private static class CartViewHolder extends RecyclerView.ViewHolder {
+
+    public class CartViewHolder extends RecyclerView.ViewHolder {
+        private ImageView itemViewImage;
         private TextView itemNameTxt, quantityTxt, priceTxt;
 
         public CartViewHolder(@NonNull View itemView) {
             super(itemView);
+            itemViewImage = itemView.findViewById(R.id.itemViewImage);
             itemNameTxt = itemView.findViewById(R.id.itemNameTxt);
             quantityTxt = itemView.findViewById(R.id.quantityTxt);
             priceTxt = itemView.findViewById(R.id.priceTxt);
         }
 
-        public void bind(CartItem cartItem) {
-            itemNameTxt.setText(cartItem.getItemName());
-            quantityTxt.setText("Quantity: " + cartItem.getQuantity());
-            priceTxt.setText("Price: " + cartItem.getTotalPrice());
+        public void bind(Fragment_CartItem fragmentCartItem) {
+            itemNameTxt.setText(fragmentCartItem.getItemName());
+            quantityTxt.setText("Quantity: " + fragmentCartItem.getQuantity());
+            priceTxt.setText("Price: " + fragmentCartItem.getTotalPrice());
+
+            int itemImageResourceId = fragmentCartItem.getItemImage();
+            itemViewImage.setImageResource(itemImageResourceId);
         }
     }
 }
