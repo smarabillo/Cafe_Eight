@@ -100,14 +100,31 @@ public class Fragment_Clickedorder extends AppCompatActivity {
     }
 
     // Add the item to the cart
+    // Add the item to the cart
     private void addToCart() {
         String selectedName = textView.getText().toString();
         int quantity = numberOrder;
         int totalPrice = (int) Double.parseDouble(priceTxt.getText().toString());
-        Class_CartItem fragmentCartItem = new Class_CartItem(selectedName, quantity, totalPrice);
+
+        // Retrieve the image resource ID using the ItemImageMapper
+        int imageResourceId = Class_ItemImageMapper.getImageResourceIdForItem(selectedName);
+
+        // Instantiate Class_CartItem with the actual data
+        Class_CartItem fragmentCartItem = new Class_CartItem(selectedName, quantity, totalPrice, imageResourceId);
+
+        // Add the item to the cart
         CartManager.getInstance().addToCart(fragmentCartItem);
 
         showToast("Item added to cart");
+    }
+
+
+    // Method to retrieve the image resource ID for a given item name
+    private int getImageResourceIdForItem(String itemName) {
+        // Implement the logic to retrieve the image resource ID based on the item name
+        // For example, you might have a method or a data structure that maps item names to image resource IDs
+        // Replace the following line with your actual implementation
+        return R.drawable.ic_launcher_foreground; // Replace with the actual logic to get the image resource ID
     }
 
     // Show a Toast message
@@ -181,6 +198,5 @@ public class Fragment_Clickedorder extends AppCompatActivity {
                 fragmentCartItems.clear();
             }
         }
-
     }
 }

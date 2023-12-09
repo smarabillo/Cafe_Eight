@@ -18,6 +18,10 @@
         <activity
             android:name=".Activity_Login"
             android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <!-- Sign Up Activity -->
@@ -30,10 +34,6 @@
         <activity
             android:name=".Activity_Main"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <!-- Clicking Orders on Order Fragment -->

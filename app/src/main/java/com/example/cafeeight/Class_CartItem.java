@@ -11,18 +11,21 @@ public class Class_CartItem {
     private int quantity;
     private double originalPrice; // Store the original price
     private double totalPrice; // Calculate total price based on quantity and original price
+    private int imageResourceId; // Add this field for the image resource ID
 
     /**
      * Constructor for Class_CartItem.
      *
-     * @param itemName      The name of the item.
-     * @param quantity      The quantity of the item.
-     * @param originalPrice The original price of the item.
+     * @param itemName        The name of the item.
+     * @param quantity        The quantity of the item.
+     * @param originalPrice   The original price of the item.
+     * @param imageResourceId The resource ID of the item image.
      */
-    public Class_CartItem(String itemName, int quantity, double originalPrice) {
+    public Class_CartItem(String itemName, int quantity, double originalPrice, int imageResourceId) {
         this.itemName = itemName;
         this.quantity = quantity;
         this.originalPrice = originalPrice;
+        this.imageResourceId = imageResourceId;
         this.totalPrice = calculateTotalPrice();
     }
 
@@ -120,5 +123,23 @@ public class Class_CartItem {
      */
     private double calculateTotalPrice() {
         return quantity * originalPrice;
+    }
+
+    /**
+     * Gets the resource ID of the item image.
+     *
+     * @return The resource ID.
+     */
+    public int getImageResourceId() {
+        return imageResourceId;
+    }
+
+    /**
+     * Sets the resource ID of the item image.
+     *
+     * @param imageResourceId The new resource ID.
+     */
+    public void setImageResourceId(int imageResourceId) {
+        this.imageResourceId = imageResourceId;
     }
 }
