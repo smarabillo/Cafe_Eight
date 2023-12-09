@@ -7,21 +7,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class Fragment_Clickedorder extends AppCompatActivity {
 
+    // UI components
     private ImageView imageView, plusBtn, minusBtn;
     private TextView textView;
     private TextView numberOrderTxt;
     private TextView priceTxt;
     private TextView addToCartBtn;
     private TextView clearCartBtn;
+
+    // Item details
     private double originalPrice;
     private int numberOrder = 1;
 
+    // Cart manager instance
     private CartManager cartManager;
 
     @Override
@@ -32,9 +35,10 @@ public class Fragment_Clickedorder extends AppCompatActivity {
         // Initialize CartManager
         cartManager = new CartManager();
 
+        // Initialize views
         initializeViews();
 
-
+        // Get item details from the intent
         Intent intent = getIntent();
         if (intent != null && intent.getExtras() != null) {
             String selectedName = intent.getStringExtra("name");
@@ -54,6 +58,7 @@ public class Fragment_Clickedorder extends AppCompatActivity {
             }
         }
 
+        // Set click listeners for quantity adjustment buttons
         plusBtn.setOnClickListener(view -> {
             numberOrder++;
             numberOrderTxt.setText(String.valueOf(numberOrder));
@@ -68,9 +73,11 @@ public class Fragment_Clickedorder extends AppCompatActivity {
             }
         });
 
+        // Set click listener for add to cart button
         addToCartBtn.setOnClickListener(view -> addToCart());
     }
 
+    // Initialize UI views
     private void initializeViews() {
         imageView = findViewById(R.id.imageView);
         textView = findViewById(R.id.tvname);
@@ -80,9 +87,9 @@ public class Fragment_Clickedorder extends AppCompatActivity {
         minusBtn = findViewById(R.id.minusBtn);
         addToCartBtn = findViewById(R.id.addToCartBtn);
         clearCartBtn = findViewById(R.id.clearCartBtn);
-
     }
 
+    // Update total price based on quantity
     private void updatePrice() {
         if (numberOrder >= 0) {
             double totalPrice = numberOrder * originalPrice;
@@ -92,6 +99,7 @@ public class Fragment_Clickedorder extends AppCompatActivity {
         }
     }
 
+    // Add the item to the cart
     private void addToCart() {
         String selectedName = textView.getText().toString();
         int quantity = numberOrder;
@@ -102,12 +110,12 @@ public class Fragment_Clickedorder extends AppCompatActivity {
         showToast("Item added to cart");
     }
 
-
+    // Show a Toast message
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
-
+    // CartManager class
     public static class CartManager {
         private static CartManager instance;
         private List<Class_CartItem> fragmentCartItems;
@@ -116,6 +124,7 @@ public class Fragment_Clickedorder extends AppCompatActivity {
             this.fragmentCartItems = new ArrayList<>();
         }
 
+        // Singleton pattern to get a single instance of CartManager
         public static CartManager getInstance() {
             if (instance == null) {
                 instance = new CartManager();
@@ -123,6 +132,7 @@ public class Fragment_Clickedorder extends AppCompatActivity {
             return instance;
         }
 
+        // Add an item to the cart
         public void addToCart(Class_CartItem fragmentCartItem) {
             if (fragmentCartItem == null) {
                 return;
@@ -135,17 +145,19 @@ public class Fragment_Clickedorder extends AppCompatActivity {
             int index = findItemIndex(fragmentCartItem);
 
             if (index != -1) {
+                // Item already exists in the cart, update quantity and total price
                 Class_CartItem existingItem = fragmentCartItems.get(index);
                 int newQuantity = existingItem.getQuantity() + fragmentCartItem.getQuantity();
                 existingItem.setQuantity(newQuantity);
-                existingItem.setTotalPrice(existingItem.getOriginalPrice() * newQuantity); // Update price based on quantity
+                existingItem.setTotalPrice(existingItem.getOriginalPrice() * newQuantity);
             } else {
+                // Add a new item to the cart
                 fragmentCartItem.setTotalPrice(fragmentCartItem.getOriginalPrice());
                 fragmentCartItems.add(fragmentCartItem);
             }
         }
 
-
+        // Find the index of an item in the cart
         private int findItemIndex(Class_CartItem newItem) {
             if (fragmentCartItems != null && newItem != null) {
                 for (int i = 0; i < fragmentCartItems.size(); i++) {
@@ -158,8 +170,17 @@ public class Fragment_Clickedorder extends AppCompatActivity {
             return -1;
         }
 
+        // Get the list of items in the cart
         public List<Class_CartItem> getCartItems() {
             return fragmentCartItems;
         }
+
+        // Clear the cart
+        public void clearCart() {
+            if (fragmentCartItems != null) {
+                fragmentCartItems.clear();
+            }
+        }
+
     }
 }

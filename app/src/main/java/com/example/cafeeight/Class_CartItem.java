@@ -2,6 +2,9 @@ package com.example.cafeeight;
 
 import java.util.Objects;
 
+/**
+ * Represents an item in the shopping cart.
+ */
 public class Class_CartItem {
 
     private String itemName;
@@ -9,6 +12,13 @@ public class Class_CartItem {
     private double originalPrice; // Store the original price
     private double totalPrice; // Calculate total price based on quantity and original price
 
+    /**
+     * Constructor for Class_CartItem.
+     *
+     * @param itemName      The name of the item.
+     * @param quantity      The quantity of the item.
+     * @param originalPrice The original price of the item.
+     */
     public Class_CartItem(String itemName, int quantity, double originalPrice) {
         this.itemName = itemName;
         this.quantity = quantity;
@@ -16,6 +26,12 @@ public class Class_CartItem {
         this.totalPrice = calculateTotalPrice();
     }
 
+    /**
+     * Checks if two Class_CartItem objects are equal based on the item name.
+     *
+     * @param obj The object to compare.
+     * @return True if equal, false otherwise.
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -24,41 +40,84 @@ public class Class_CartItem {
         return itemName.equals(cartItem.itemName);
     }
 
+    /**
+     * Generates a hash code based on the item name.
+     *
+     * @return The hash code.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(itemName);
     }
 
+    /**
+     * Gets the name of the item.
+     *
+     * @return The item name.
+     */
     public String getItemName() {
         return itemName;
     }
 
+    /**
+     * Gets the quantity of the item.
+     *
+     * @return The quantity.
+     */
     public int getQuantity() {
         return quantity;
     }
 
+    /**
+     * Sets the quantity of the item and recalculates the total price.
+     *
+     * @param quantity The new quantity.
+     */
     public void setQuantity(int quantity) {
         this.quantity = quantity;
         // Recalculate total price when quantity changes
         this.totalPrice = calculateTotalPrice();
     }
 
+    /**
+     * Gets the original price of the item.
+     *
+     * @return The original price.
+     */
     public double getOriginalPrice() {
         return originalPrice;
     }
 
+    /**
+     * Gets the total price of the item.
+     *
+     * @return The total price.
+     */
     public double getTotalPrice() {
         return totalPrice;
     }
 
+    /**
+     * Sets the total price of the item.
+     *
+     * @param totalPrice The new total price.
+     */
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
     }
 
+    /**
+     * Resets the total price to the original calculated value.
+     */
     public void resetPriceToOriginal() {
         this.totalPrice = calculateTotalPrice();
     }
 
+    /**
+     * Calculates the total price based on quantity and original price.
+     *
+     * @return The calculated total price.
+     */
     private double calculateTotalPrice() {
         return quantity * originalPrice;
     }

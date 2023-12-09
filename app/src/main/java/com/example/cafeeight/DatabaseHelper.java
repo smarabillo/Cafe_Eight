@@ -14,8 +14,9 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
+    // Database properties
     private static final String DATABASE_NAME = "CafeEightDB";
-    private static final int DATABASE_VERSION = 2; // Increment the version when you make changes
+    private static final int DATABASE_VERSION = 2;
 
     // Users table properties
     private static final String TABLE_USERS = "Users";
@@ -58,6 +59,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    // Insert an order into the database
     public static long insertOrder(Context context, double totalAmount, int totalItems) {
         SQLiteDatabase db = null;
         long orderId = -1;
@@ -72,15 +74,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } catch (SQLiteException e) {
             Log.e("DatabaseHelper", "Error inserting order: " + e.getMessage());
         } finally {
-            if (db != null && db.isOpen()) {
-                db.close();
-            }
+            closeDatabase(db);
         }
 
         return orderId;
     }
 
-
+    // Get the latest order from the database
     public Order getLatestOrder() {
         SQLiteDatabase db = null;
         Order latestOrder = null;
@@ -108,18 +108,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } catch (Exception e) {
             Log.e("DatabaseHelper", "Error getting latest order: " + e.getMessage());
         } finally {
-            if (db != null && db.isOpen()) {
-                db.close();
-            }
+            closeDatabase(db);
         }
 
         return latestOrder;
     }
 
-
-
-    // Users methods
-
+    // Insert user data into the Users table
     public void insertData(String email, String password) {
         SQLiteDatabase db = null;
 
@@ -132,12 +127,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } catch (Exception e) {
             Log.e("DatabaseHelper", "Error inserting user data: " + e.getMessage());
         } finally {
-            if (db != null && db.isOpen()) {
-                db.close();
-            }
+            closeDatabase(db);
         }
     }
 
+    // Check if an email exists in the Users table
     public boolean checkEmail(String email) {
         SQLiteDatabase database = this.getWritableDatabase();
         Cursor cursor = database.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE " + KEY_EMAIL + " = ?", new String[]{email});
@@ -146,6 +140,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    // Check if an email and password match in the Users table
     public boolean checkEmailPassword(String email, String password) {
         SQLiteDatabase database = this.getWritableDatabase();
         Cursor cursor = database.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE " + KEY_EMAIL + " = ? AND " + KEY_PASSWORD + " = ?", new String[]{email, password});
@@ -154,15 +149,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    private void closeDatabase(SQLiteDatabase db) {
+    // Close the database if open
+    private static void closeDatabase(SQLiteDatabase db) {
         if (db != null && db.isOpen()) {
             db.close();
-        }
-    }
-
-    private void closeStatement(SQLiteStatement statement) {
-        if (statement != null) {
-            statement.close();
         }
     }
 }
