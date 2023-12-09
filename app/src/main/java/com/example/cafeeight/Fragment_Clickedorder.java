@@ -138,9 +138,9 @@ public class Fragment_Clickedorder extends AppCompatActivity {
                 Class_CartItem existingItem = fragmentCartItems.get(index);
                 int newQuantity = existingItem.getQuantity() + fragmentCartItem.getQuantity();
                 existingItem.setQuantity(newQuantity);
-                existingItem.setPrice(existingItem.getPrice() * newQuantity); // Update price based on quantity
+                existingItem.setTotalPrice(existingItem.getOriginalPrice() * newQuantity); // Update price based on quantity
             } else {
-                fragmentCartItem.setTotalPrice(fragmentCartItem.getPrice());
+                fragmentCartItem.setTotalPrice(fragmentCartItem.getOriginalPrice());
                 fragmentCartItems.add(fragmentCartItem);
             }
         }
