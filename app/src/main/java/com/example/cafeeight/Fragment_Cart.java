@@ -22,6 +22,8 @@ public class Fragment_Cart extends Fragment {
     private RecyclerView recyclerView;
     private CartAdapter cartAdapter;
     private TextView itemsTotalTxt, totalPriceTxt, checkoutBtn, clearItems;
+
+    // Declare the databaseHelper at the class level
     public static DatabaseHelper databaseHelper;
 
     @Override
@@ -36,6 +38,9 @@ public class Fragment_Cart extends Fragment {
         checkoutBtn = view.findViewById(R.id.CheckOutBtn);
         clearItems = view.findViewById(R.id.clearCartBtn);
 
+        // Remove the redeclaration of databaseHelper
+        // public static DatabaseHelper databaseHelper;
+
         // Get the list of items in the cart
         List<Class_CartItem> fragmentCartItems = Fragment_Clickedorder.CartManager.getInstance().getCartItems();
 
@@ -47,15 +52,16 @@ public class Fragment_Cart extends Fragment {
         cartAdapter = new CartAdapter(fragmentCartItems);
         recyclerView.setAdapter(cartAdapter);
 
-        // Initialize the database helper
-        databaseHelper = new DatabaseHelper(requireContext());
+        // Initialize the database helper only if it is not already initialized
+        if (databaseHelper == null) {
+            databaseHelper = new DatabaseHelper(requireContext());
+        }
 
         // Update the total amount display
         updateTotalAmount();
 
         return view;
     }
-
     // Update the total amount display
     private void updateTotalAmount() {
         double totalAmount = calculateTotalAmount();
@@ -116,18 +122,9 @@ public class Fragment_Cart extends Fragment {
 
     // Perform the checkout process
     private void performCheckout(double totalAmount, int totalItems) {
-        // Custom layout for order summary
-        View view = LayoutInflater.from(requireContext()).inflate(R.layout.fragment_transactions, null);
-        TextView textViewTotalAmount = view.findViewById(R.id.textViewTotalAmount);
-
-        // Set order details in the custom layout
-        String orderDetails = "Total Items " + "\t" + totalItems + "\n" + "Total Amount: ₱ " + totalAmount;
-        textViewTotalAmount.setText(orderDetails);
-
-        // Create AlertDialog with the custom layout
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Order Summary")
-                .setView(view)
+        builder.setTitle("Confirm Order")
+                .setMessage("Confirm your order with a total amount of ₱" + totalAmount + " and " + totalItems + " items?")
                 .setPositiveButton("Confirm", (dialog, which) -> {
                     // Insert order data into the database
                     long orderId = saveOrderInDatabase(totalAmount, totalItems);
@@ -151,12 +148,12 @@ public class Fragment_Cart extends Fragment {
                 .show();
     }
 
+
     // Clear the cart
     private void clearCart() {
         Fragment_Clickedorder.CartManager.getInstance().clearCart();
         updateTotalAmount(); // Update total amount after clearing the cart
     }
-
 
 
     // Save the order details in the database

@@ -2,8 +2,6 @@ package com.example.cafeeight;
 
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.EditText;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.annotation.NonNull;
@@ -14,7 +12,7 @@ public class Activity_Main extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
     private final Fragment_Dashboard fragmentDashboard = new Fragment_Dashboard();
-    private final Fragment_Orders fragmentOrders = new Fragment_Orders();
+    private final Fragment_HotCoffee fragmentOrders = new Fragment_HotCoffee();
     private final Fragment_Transactions fragmentTransaction = new Fragment_Transactions();
     private final Fragment_Profile fragmentProfile = new Fragment_Profile();
 

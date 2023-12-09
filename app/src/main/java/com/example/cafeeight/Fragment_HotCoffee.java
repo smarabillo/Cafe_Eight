@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -16,7 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-public class Fragment_Orders extends Fragment {
+public class Fragment_HotCoffee extends Fragment {
 
     private GridView gridHotCoffee;
     private String[] hotCoffeeNames = {"Brewed", "Latte", "Cappuccino"};
@@ -26,10 +25,10 @@ public class Fragment_Orders extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_orders, container, false);
+        View view = inflater.inflate(R.layout.fragment_hotcoffee, container, false);
 
         gridHotCoffee = view.findViewById(R.id.OrderGrid);
-        Fragment_Orders.CustomAdapter customAdapter = new Fragment_Orders.CustomAdapter(hotCoffeeNames, hotCoffeePrices, hotCoffeeImages);
+        Fragment_HotCoffee.CustomAdapter customAdapter = new Fragment_HotCoffee.CustomAdapter(hotCoffeeNames, hotCoffeePrices, hotCoffeeImages);
         gridHotCoffee.setAdapter(customAdapter);
 
         gridHotCoffee.setOnItemClickListener((adapterView, item, position, id) -> {
@@ -42,7 +41,7 @@ public class Fragment_Orders extends Fragment {
                     .putExtra("image", selectedImage));
         });
 
-        setClickListener(view.findViewById(R.id.hotcoffee), new Fragment_Orders());
+        setClickListener(view.findViewById(R.id.hotcoffee), new Fragment_HotCoffee());
         setClickListener(view.findViewById(R.id.icedcoffee), new Fragment_IcedCoffee());
         setClickListener(view.findViewById(R.id.frappedrinks), new Fragment_Frappedrinks());
         setClickListener(view.findViewById(R.id.noncoffee), new Fragment_Noncoffee());

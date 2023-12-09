@@ -1,12 +1,10 @@
 package com.example.cafeeight;
-import androidx.fragment.app.FragmentManager;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -14,7 +12,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 public class Fragment_Frappedrinks extends Fragment {
 
@@ -42,7 +39,7 @@ public class Fragment_Frappedrinks extends Fragment {
                     .putExtra("image", selectedImage));
         });
 
-        setClickListener(view.findViewById(R.id.hotcoffee), new Fragment_Orders());
+        setClickListener(view.findViewById(R.id.hotcoffee), new Fragment_HotCoffee());
         setClickListener(view.findViewById(R.id.icedcoffee), new Fragment_IcedCoffee());
         setClickListener(view.findViewById(R.id.frappedrinks), new Fragment_Frappedrinks());
         setClickListener(view.findViewById(R.id.noncoffee), this);

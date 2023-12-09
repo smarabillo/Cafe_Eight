@@ -20,12 +20,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Users table properties
     private static final String TABLE_USERS = "Users";
-    private static final String KEY_ID = "id";
-    private static final String KEY_EMAIL = "email";
-    private static final String KEY_PASSWORD = "password";
+    private static final String USER_ID = "id";
+    private static final String USER_EMAIL = "email";
+    private static final String USER_PASSWORD = "password";
 
     // Orders table properties
-    private static final String TABLE_ORDERS = "orders";
+    private static final String TABLE_ORDERS = "Orders";
     private static final String ORDER_ID = "order_id";
     private static final String ORDER_TOTAL_AMOUNT = "total_amount";
     private static final String ORDER_TOTAL_ITEMS = "total_items";
@@ -38,9 +38,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         // Create Users table
         String createUsersTableQuery = "CREATE TABLE " + TABLE_USERS + "(" +
-                KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                KEY_EMAIL + " TEXT, " +
-                KEY_PASSWORD + " TEXT)";
+                USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                USER_EMAIL + " TEXT, " +
+                USER_PASSWORD + " TEXT)";
         db.execSQL(createUsersTableQuery);
 
         // Create Orders table
@@ -121,8 +121,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             db = getWritableDatabase();
             ContentValues contentValues = new ContentValues();
-            contentValues.put(KEY_EMAIL, email);
-            contentValues.put(KEY_PASSWORD, password);
+            contentValues.put(USER_EMAIL, email);
+            contentValues.put(USER_PASSWORD, password);
             db.insertOrThrow(TABLE_USERS, null, contentValues);
         } catch (Exception e) {
             Log.e("DatabaseHelper", "Error inserting user data: " + e.getMessage());
@@ -134,7 +134,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Check if an email exists in the Users table
     public boolean checkEmail(String email) {
         SQLiteDatabase database = this.getWritableDatabase();
-        Cursor cursor = database.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE " + KEY_EMAIL + " = ?", new String[]{email});
+        Cursor cursor = database.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE " + USER_EMAIL + " = ?", new String[]{email});
         boolean result = cursor.getCount() > 0;
         cursor.close();
         return result;
@@ -143,7 +143,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Check if an email and password match in the Users table
     public boolean checkEmailPassword(String email, String password) {
         SQLiteDatabase database = this.getWritableDatabase();
-        Cursor cursor = database.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE " + KEY_EMAIL + " = ? AND " + KEY_PASSWORD + " = ?", new String[]{email, password});
+        Cursor cursor = database.rawQuery("SELECT * FROM " + TABLE_USERS + " WHERE " + USER_EMAIL + " = ? AND " + USER_PASSWORD + " = ?", new String[]{email, password});
         boolean result = cursor.getCount() > 0;
         cursor.close();
         return result;
@@ -154,5 +154,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (db != null && db.isOpen()) {
             db.close();
         }
+    }
+
+    public List<Order> getAllConfirmedOrders() {
+        SQLiteDatabase db = null;
+        List<Order> orderList = new ArrayList<>();
+
+        try {
+            db = getReadableDatabase();
+            String query = "SELECT * FROM " + TABLE_ORDERS + " ORDER BY " + ORDER_ID + " DESC";
+            Cursor cursor = db.rawQuery(query, null);
+
+            while (cursor.moveToNext()) {
+                int orderIdIndex = cursor.getColumnIndex(ORDER_ID);
+                int totalAmountIndex = cursor.getColumnIndex(ORDER_TOTAL_AMOUNT);
+                int totalItemsIndex = cursor.getColumnIndex(ORDER_TOTAL_ITEMS);
+
+                if (orderIdIndex != -1 && totalAmountIndex != -1 && totalItemsIndex != -1) {
+                    int orderId = cursor.getInt(orderIdIndex);
+                    double totalAmount = cursor.getDouble(totalAmountIndex);
+                    int totalItems = cursor.getInt(totalItemsIndex);
+
+                    Order order = new Order(orderId, totalAmount, totalItems);
+                    orderList.add(order);
+                }
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error getting confirmed orders: " + e.getMessage());
+        } finally {
+            closeDatabase(db);
+        }
+
+        return orderList;
     }
 }

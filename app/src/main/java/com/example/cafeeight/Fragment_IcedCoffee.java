@@ -39,7 +39,7 @@ public class Fragment_IcedCoffee extends Fragment {
                     .putExtra("image", selectedImage));
         });
 
-        setClickListener(view.findViewById(R.id.hotcoffee), new Fragment_Orders());
+        setClickListener(view.findViewById(R.id.hotcoffee), new Fragment_HotCoffee());
         setClickListener(view.findViewById(R.id.icedcoffee), this);
         setClickListener(view.findViewById(R.id.frappedrinks), new Fragment_Frappedrinks());
         setClickListener(view.findViewById(R.id.noncoffee), new Fragment_Noncoffee());
