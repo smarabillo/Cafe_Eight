@@ -1,44 +1,88 @@
 <!-- cart_item.xml -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     app:cardElevation="4dp"
-    android:background="@drawable/borders">
+    android:background="@drawable/borders"
+    android:paddingTop="10px">
 
     <ImageView
         android:id="@+id/itemViewImage"
-        android:layout_width="86dp"
-        android:layout_height="86dp"
+        android:layout_width="82dp"
+        android:layout_height="82dp"
         android:layout_marginRight="8dp" />
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:padding="9dp"
-        android:orientation="vertical">
+        android:id="@+id/linearLayout7"
+        android:layout_width="191dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="9dp">
 
         <TextView
             android:id="@+id/itemNameTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:text="Item Name" />
+            android:paddingTop="10px"
+            android:text="Item Name"
+            android:textSize="32px"
+            tools:layout_conversion_absoluteHeight="24dp"
+            tools:layout_conversion_absoluteWidth="78dp"
+            tools:layout_editor_absoluteX="103dp"
+            tools:layout_editor_absoluteY="9dp" />
 
         <TextView
             android:id="@+id/quantityTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:text="Quantity" />
+            android:text="Quantity"
+
+            android:textSize="32px"
+            tools:layout_conversion_absoluteHeight="24dp"
+            tools:layout_conversion_absoluteWidth="60dp"
+            tools:layout_editor_absoluteX="103dp"
+            tools:layout_editor_absoluteY="33dp" />
+
 
         <TextView
             android:id="@+id/priceTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:text="Price" />
+            android:text="Price"
+            android:textSize="32px"
+            tools:layout_conversion_absoluteHeight="24dp"
+            tools:layout_conversion_absoluteWidth="34dp"
+            tools:layout_editor_absoluteX="103dp"
+            tools:layout_editor_absoluteY="56dp" />
+
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="75dp"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:paddingTop="30dp">
+
+
+        <ImageView
+            android:id="@+id/minusQtyBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/icon_minus" />
+
+        <ImageView
+            android:id="@+id/addQtyBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/icon_add" />
+    </LinearLayout>
+
 </LinearLayout>

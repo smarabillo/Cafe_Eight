@@ -12,11 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Fragment_Clickedorder extends AppCompatActivity {
+
     private ImageView imageView, plusBtn, minusBtn;
     private TextView textView;
     private TextView numberOrderTxt;
     private TextView priceTxt;
     private TextView addToCartBtn;
+    private TextView clearCartBtn;
     private double originalPrice;
     private int numberOrder = 1;
 
@@ -77,6 +79,8 @@ public class Fragment_Clickedorder extends AppCompatActivity {
         plusBtn = findViewById(R.id.plusBtn);
         minusBtn = findViewById(R.id.minusBtn);
         addToCartBtn = findViewById(R.id.addToCartBtn);
+        clearCartBtn = findViewById(R.id.clearCartBtn);
+
     }
 
     private void updatePrice() {
@@ -92,8 +96,7 @@ public class Fragment_Clickedorder extends AppCompatActivity {
         String selectedName = textView.getText().toString();
         int quantity = numberOrder;
         int totalPrice = (int) Double.parseDouble(priceTxt.getText().toString());
-
-        Fragment_CartItem fragmentCartItem = new Fragment_CartItem(selectedName, quantity, totalPrice);
+        Class_CartItem fragmentCartItem = new Class_CartItem(selectedName, quantity, totalPrice);
         CartManager.getInstance().addToCart(fragmentCartItem);
 
         showToast("Item added to cart");
@@ -104,9 +107,10 @@ public class Fragment_Clickedorder extends AppCompatActivity {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
+
     public static class CartManager {
         private static CartManager instance;
-        private List<Fragment_CartItem> fragmentCartItems;
+        private List<Class_CartItem> fragmentCartItems;
 
         private CartManager() {
             this.fragmentCartItems = new ArrayList<>();
@@ -119,47 +123,43 @@ public class Fragment_Clickedorder extends AppCompatActivity {
             return instance;
         }
 
-        public void addToCart(Fragment_CartItem fragmentCartItem) {
+        public void addToCart(Class_CartItem fragmentCartItem) {
             if (fragmentCartItem == null) {
-                return; // Exit early if the item is null
+                return;
             }
 
             if (fragmentCartItems == null) {
-                // Initialize the cartItems list if it's null
                 fragmentCartItems = new ArrayList<>();
             }
 
             int index = findItemIndex(fragmentCartItem);
 
             if (index != -1) {
-                // Item already exists in the cart, update quantity
-                Fragment_CartItem existingItem = fragmentCartItems.get(index);
-                existingItem.setQuantity(existingItem.getQuantity() + fragmentCartItem.getQuantity());
-                existingItem.setPrice(existingItem.getPrice() + fragmentCartItem.getPrice());
+                Class_CartItem existingItem = fragmentCartItems.get(index);
+                int newQuantity = existingItem.getQuantity() + fragmentCartItem.getQuantity();
+                existingItem.setQuantity(newQuantity);
+                existingItem.setPrice(existingItem.getPrice() * newQuantity); // Update price based on quantity
             } else {
-                // Item doesn't exist in the cart, add it and set the original price
-                fragmentCartItem.setTotalPrice(fragmentCartItem.getPrice()); // Assuming you have a getPrice() method
+                fragmentCartItem.setTotalPrice(fragmentCartItem.getPrice());
                 fragmentCartItems.add(fragmentCartItem);
             }
         }
 
-        private int findItemIndex(Fragment_CartItem newItem) {
+
+        private int findItemIndex(Class_CartItem newItem) {
             if (fragmentCartItems != null && newItem != null) {
                 for (int i = 0; i < fragmentCartItems.size(); i++) {
-                    Fragment_CartItem existingItem = fragmentCartItems.get(i);
+                    Class_CartItem existingItem = fragmentCartItems.get(i);
                     if (existingItem.equals(newItem)) {
-                        return i; // Item found, return its index
+                        return i;
                     }
                 }
             }
-            return -1; // Item not found
+            return -1;
         }
 
-
-
-        public List<Fragment_CartItem> getCartItems() {
+        public List<Class_CartItem> getCartItems() {
             return fragmentCartItems;
         }
-
     }
 }

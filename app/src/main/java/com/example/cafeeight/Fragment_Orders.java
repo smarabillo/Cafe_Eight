@@ -23,6 +23,7 @@ public class Fragment_Orders extends Fragment {
     private int[] hotCoffeePrices = {55, 90, 90};
     private int[] hotCoffeeImages = {R.drawable.prodcut_brewed, R.drawable.product_latte, R.drawable.product_cappuccino};
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_orders, container, false);
