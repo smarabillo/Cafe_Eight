@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/textViewOrderId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Order ID: "
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textViewTotalAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Total Amount: "
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/textViewTotalItems"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Total Items: "
+        android:textSize="14sp" />
+
+    <!-- Add more views here if needed -->
+
+</LinearLayout>
