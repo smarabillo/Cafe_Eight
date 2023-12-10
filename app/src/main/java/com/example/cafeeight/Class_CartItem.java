@@ -9,7 +9,7 @@ public class Class_CartItem {
 
     private String itemName;
     private int quantity;
-    private double originalPrice; // Store the original price
+    private final double originalPrice; // Store the original price
     private double totalPrice; // Calculate total price based on quantity and original price
     private int imageResourceId; // Add this field for the image resource ID
 

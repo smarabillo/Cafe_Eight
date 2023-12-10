@@ -125,6 +125,10 @@ public class Fragment_Cart extends Fragment {
 
     // Perform the checkout process
     private void performCheckout(double totalAmount, int totalItems) {
+        if (totalItems == 0) {
+            Toast.makeText(requireContext(), "Your cart is empty. Add items before confirming.", Toast.LENGTH_SHORT).show();
+            return;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Confirm Order")
                 .setMessage("Confirm your order with a total amount of ₱" + totalAmount + " and " + totalItems + " items?")
