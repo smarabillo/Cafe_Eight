@@ -30,7 +30,7 @@ public class Fragment_Clickedorder extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.clicked_order);
+        setContentView(R.layout.fragment_clicked_order);
 
         // Initialize CartManager
         cartManager = new CartManager();

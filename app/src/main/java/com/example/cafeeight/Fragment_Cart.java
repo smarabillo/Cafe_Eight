@@ -56,6 +56,10 @@ public class Fragment_Cart extends Fragment {
         // Update the total amount display
         updateTotalAmount();
 
+        clearItems.setOnClickListener(v -> {
+            confirmClearCart(); // Show a confirmation dialog before clearing the cart
+        });
+
         return view;
     }
     // Update the total amount display
@@ -155,6 +159,32 @@ public class Fragment_Cart extends Fragment {
                 .show();
     }
 
+    private void confirmClearCart() {
+        // Check if the cart is empty
+        if (isCartEmpty()) {
+            Toast.makeText(requireContext(), "Your cart is already empty.", Toast.LENGTH_SHORT).show();
+            return; // Don't show the confirmation dialog if the cart is empty
+        }
+
+        // If the cart is not empty, show the confirmation dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Clear Cart")
+                .setMessage("Are you sure you want to clear your cart?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    clearCart(); // Clear the cart if the user clicks "Yes"
+                    dialog.dismiss();
+                })
+                .setNegativeButton("No", (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .show();
+    }
+
+    // Check if the cart is empty
+    private boolean isCartEmpty() {
+        List<Class_CartItem> cartItems = Fragment_Clickedorder.CartManager.getInstance().getCartItems();
+        return cartItems == null || cartItems.isEmpty();
+    }
 
     // Clear the cart
     private void clearCart() {
